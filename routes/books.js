@@ -1,9 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const Book = require('../models').Book;
-
 const app = express();
-
 
 /* GET books listing. */
 router.get('/', function(req, res, next) {
@@ -15,7 +13,12 @@ router.get('/', function(req, res, next) {
 /* Show book details form. */
 router.get('/book:id', function(req, res, next) {
   Book.findByPk(req.params.id).then((book) => {
-    res.render('update-book.pug', { book: book, pageTitle: 'Book details'});
+    // If a user types wrong id, a "Page not found" message will appear.
+    if (book) {
+      res.render('update-book.pug', { book: book, pageTitle: 'Book details'});
+    } else {
+      res.render('page-not-found.pug');
+    }
   });
 });
 
@@ -48,26 +51,5 @@ router.post('/book:id/delete', function(req, res, next) {
     res.redirect("/books");
   });
 });
-
-/* Function which handles non-existenet routes. */
-// app.use((request, response, next) => {
-//   const error = new Error('Page not found');
-//   error.status = 404;
-//   //next(error);
-//   response.render('page-not-found.pug', {
-//     error: error,
-//     errorStatus: error.status
-//   })
-// })
-//
-// /*Error handler*/
-// app.use((error, request, response, next) => {
-//   response.locals.error = error;
-//   response.status(error.status);
-//   response.render('error.pug', {
-//     error: error,
-//     errorStatus: error.status
-//   })
-// })
 
 module.exports = router;
