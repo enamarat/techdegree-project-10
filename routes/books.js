@@ -13,11 +13,11 @@ router.get('/', function(req, res, next) {
 /* Show book details form. */
 router.get('/book:id', function(req, res, next) {
   Book.findByPk(req.params.id).then((book) => {
-    // If a user types wrong id, a "Page not found" message will appear.
+    // If a user types wrong id, an error message will appear.
     if (book) {
       res.render('update-book.pug', { book: book, pageTitle: 'Book details'});
     } else {
-      res.render('page-not-found.pug');
+      res.render('error.pug', { message: 'Server Error', description: 'Sorry! There was an unexpected error on the server.'});
     }
   });
 });
@@ -28,6 +28,14 @@ router.post('/book:id', function(req, res, next) {
     return book.update(req.body);
   }).then((book)=> {
     res.redirect("/books");
+  }).catch((err)=> {
+    if (err.name === "SequelizeValidationError") {
+      const book = Book.build(req.body);
+      book.id = req.params.id;
+      res.render('update-book.pug', {book: book, pageTitle: "Book details", errors: err.errors});
+    } else {
+      throw err;
+    }
   });
 });
 
@@ -40,6 +48,12 @@ router.get('/new', function(req, res, next) {
 router.post('/new', function(req, res, next) {
   return Book.create(req.body).then(() => {
     res.redirect("/books");
+  }).catch((err)=> {
+    if (err.name === "SequelizeValidationError") {
+      res.render('new-book.pug', {book: Book.build(req.body), pageTitle: "New book", errors: err.errors});
+    } else {
+      throw err;
+    }
   });
 });
 
