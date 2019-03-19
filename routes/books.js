@@ -13,14 +13,14 @@ router.get('/', function(req, res, next) {
 });
 
 /* Show book details form. */
-router.get('/details/:id', function(req, res, next) {
+router.get('/book:id', function(req, res, next) {
   Book.findByPk(req.params.id).then((book) => {
     res.render('update-book.pug', { book: book, pageTitle: 'Book details'});
   });
 });
 
 /* Update book info in the database. */
-router.put('/details/:id', function(req, res, next) {
+router.post('/book:id', function(req, res, next) {
   Book.findByPk(req.params.id).then((book) => {
     return book.update(req.body);
   }).then((book)=> {
@@ -41,7 +41,7 @@ router.post('/new', function(req, res, next) {
 });
 
 /* Delete a book. */
-router.post('/details/:id/delete', function(req, res, next) {
+router.post('/book:id/delete', function(req, res, next) {
   Book.findByPk(req.params.id).then((book)=>{
     return book.destroy();
   }).then(() => {
