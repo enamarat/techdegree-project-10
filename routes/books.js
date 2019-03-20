@@ -10,35 +10,6 @@ router.get('/', function(req, res, next) {
   });
 });
 
-/* Show book details form. */
-router.get('/book:id', function(req, res, next) {
-  Book.findByPk(req.params.id).then((book) => {
-    // If a user types wrong id, an error message will appear.
-    if (book) {
-      res.render('update-book.pug', { book: book, pageTitle: 'Book details'});
-    } else {
-      res.render('error.pug', { message: 'Server Error', description: 'Sorry! There was an unexpected error on the server.'});
-    }
-  });
-});
-
-/* Update book info in the database. */
-router.post('/book:id', function(req, res, next) {
-  Book.findByPk(req.params.id).then((book) => {
-    return book.update(req.body);
-  }).then((book)=> {
-    res.redirect("/books");
-  }).catch((err)=> {
-    if (err.name === "SequelizeValidationError") {
-      const book = Book.build(req.body);
-      book.id = req.params.id;
-      res.render('update-book.pug', {book: book, pageTitle: "Book details", errors: err.errors});
-    } else {
-      throw err;
-    }
-  });
-});
-
 /* Add a new book form. */
 router.get('/new', function(req, res, next) {
   res.render('new-book.pug', { pageTitle: 'New Book' });
@@ -57,8 +28,37 @@ router.post('/new', function(req, res, next) {
   });
 });
 
+/* Show book details form. */
+router.get('/:id', function(req, res, next) {
+  Book.findByPk(req.params.id).then((book) => {
+    // If a user types wrong id, an error message will appear.
+    if (book) {
+      res.render('update-book.pug', { book: book, pageTitle: 'Book details'});
+    } else {
+      res.render('error.pug', { message: 'Server Error', description: 'Sorry! There was an unexpected error on the server.'});
+    }
+  });
+});
+
+/* Update book info in the database. */
+router.post('/:id', function(req, res, next) {
+  Book.findByPk(req.params.id).then((book) => {
+    return book.update(req.body);
+  }).then((book)=> {
+    res.redirect("/books");
+  }).catch((err)=> {
+    if (err.name === "SequelizeValidationError") {
+      const book = Book.build(req.body);
+      book.id = req.params.id;
+      res.render('update-book.pug', {book: book, pageTitle: "Book details", errors: err.errors});
+    } else {
+      throw err;
+    }
+  });
+});
+
 /* Delete a book. */
-router.post('/book:id/delete', function(req, res, next) {
+router.post('/:id/delete', function(req, res, next) {
   Book.findByPk(req.params.id).then((book)=>{
     return book.destroy();
   }).then(() => {

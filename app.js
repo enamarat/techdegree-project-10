@@ -34,7 +34,6 @@ app.use(function(req, res, next) {
   const error = new Error('Page not found');
   error.status = 404;
   next(error);
-  //next(createError(404));
 });
 
 // error handler
