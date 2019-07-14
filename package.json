@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "freshtall": "rm -rf node_modules && rm -rf package-lock.json && npm install"
   },
   "dependencies": {
     "body-parser": "^1.19.0",
