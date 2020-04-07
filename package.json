@@ -19,6 +19,7 @@
     "sqlite3": "^4.0.9"
   },
   "devDependencies": {
+    "acorn": "^7.1.1",
     "kind-of": "^6.0.3"
   }
 }
